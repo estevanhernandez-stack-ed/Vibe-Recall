@@ -1,0 +1,15 @@
+node_modules/
+*.log
+.DS_Store
+.env
+.env.local
+coverage/
+dist/
+build/
+temp-estate-*
+
+# Author's own estate notes -- real repo names, fork analysis, identity-spread
+# measurements. Never meant to ship; kept locally only. A durable copy lives
+# in the vibe-plugins repo at
+# docs/superpowers/cowpath-vibe-recall-2026-08-11.md.
+docs/cowpath-notes.md

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["estateRoot", "walls"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "estateRoot": { "type": "string", "minLength": 1 },
+    "githubAccounts": { "type": "array", "items": { "type": "string" } },
+    "walls": { "type": "array", "items": { "type": "string" } },
+    "exclude": { "type": "array", "items": { "type": "string" } },
+    "staleAfterDays": { "type": "integer", "minimum": 1, "default": 14 },
+    "authors": { "type": "array", "items": { "type": "string" } },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minAuthorshipRatio": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

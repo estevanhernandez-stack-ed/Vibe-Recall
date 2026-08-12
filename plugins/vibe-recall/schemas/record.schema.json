@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Corpus Record",
+  "description": "A corpus record produced by enumerateLocal/collapseDuplicates/remoteOnly for a discovered repository, either local or remote-only. Not a card -- see schemas/card.schema.json for the searchable-index artifact built from this record.",
+  "type": "object",
+  "required": ["name", "origin", "remote", "provenance", "provenanceKnown"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Repository name"
+    },
+    "path": {
+      "type": ["string", "null"],
+      "description": "Absolute path to the repository directory, null for remote-only repos"
+    },
+    "origin": {
+      "type": "string",
+      "enum": ["local", "remote"],
+      "description": "Whether the repo has a local clone (local) or exists only on GitHub (remote)"
+    },
+    "remote": {
+      "type": ["string", "null"],
+      "description": "The remote URL (git@host:path or https://host/path format), null if no remote is configured"
+    },
+    "provenance": {
+      "type": "string",
+      "enum": ["own", "foreign"],
+      "description": "Ownership classification: 'own' if owned by the developer, 'foreign' if not"
+    },
+    "provenanceKnown": {
+      "type": "boolean",
+      "description": "Whether provenance was verified locally (true for local repos with history, false for remote-only repos)"
+    },
+    "remoteReadFailed": {
+      "type": "boolean",
+      "description": "Whether reading the remote URL from git config failed (local repos only)"
+    },
+    "head": {
+      "type": ["string", "null"],
+      "description": "Short commit hash local repos are currently at, null for a repo with zero commits or a remote-only record. collapseDuplicates compares this across siblings to detect divergence."
+    },
+    "lastCommit": {
+      "type": ["integer", "null"],
+      "description": "Unix timestamp (seconds) of the most recent commit, null for a repo with zero commits or a remote-only record"
+    },
+    "canonical": {
+      "type": "boolean",
+      "description": "Whether this record won dedup as the canonical copy among clones sharing a remote. Added by collapseDuplicates; absent on raw enumerateLocal/remoteOnly records that were never deduped."
+    },
+    "siblings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Names of other local clones collapsed into this one (empty if none). Added by collapseDuplicates."
+    },
+    "diverged": {
+      "type": "boolean",
+      "description": "Whether the canonical winner and at least one sibling clone are at different heads. Added by collapseDuplicates."
+    },
+    "dedupVerified": {
+      "type": "boolean",
+      "description": "Whether duplicate collapse was actually verified against a resolvable remote key rather than assumed. Added by collapseDuplicates."
+    }
+  },
+  "additionalProperties": false
+}

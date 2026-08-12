@@ -1,0 +1,7 @@
+{
+  "name": "vibe-recall",
+  "version": "0.1.0",
+  "description": "Surface prior art from your own repos while you spec the next one. Indexes your estate, ranks what you already built, and verifies the hit at current HEAD before it claims anything.",
+  "author": { "name": "626 Labs" },
+  "license": "MIT"
+}

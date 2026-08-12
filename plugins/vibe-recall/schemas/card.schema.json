@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Shallow Card",
+  "description": "A searchable index card built by engine/cards.mjs from a corpus record (see schemas/record.schema.json). Carries shapes only -- symbol names, dependency names, short claim strings -- never file bodies or secret values.",
+  "type": "object",
+  "required": [
+    "schemaVersion", "repo", "origin", "depth", "indexedAt",
+    "provenance", "provenanceKnown", "dedupVerified", "scanTruncated"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "repo": { "type": "string" },
+    "origin": { "enum": ["local", "remote"] },
+    "path": { "type": ["string", "null"] },
+    "remote": { "type": ["string", "null"] },
+    "canonical": { "type": "boolean" },
+    "siblings": { "type": "array", "items": { "type": "string" } },
+    "diverged": { "type": "boolean" },
+    "provenance": { "enum": ["own", "foreign"] },
+    "provenanceKnown": {
+      "type": "boolean",
+      "description": "Whether provenance was verified locally rather than assumed (false for remote-only repos)"
+    },
+    "dedupVerified": {
+      "type": "boolean",
+      "description": "Whether duplicate collapse was actually verified against a remote key rather than assumed (false when no remote was configured)"
+    },
+    "head": { "type": ["string", "null"] },
+    "lastCommit": { "type": ["integer", "null"] },
+    "indexedAt": { "type": "string" },
+    "depth": { "enum": ["shallow", "shallow-remote", "deep"] },
+    "stack": { "type": "object" },
+    "deps": { "type": "array", "items": { "type": "string" } },
+    "entrypoints": { "type": "array", "items": { "type": "string" } },
+    "symbols": { "type": "array", "items": { "type": "string" } },
+    "claims": { "type": "array", "items": { "type": "string" } },
+    "gotchas": { "type": "array", "items": { "type": "string" } },
+    "recallHits": { "type": "integer" },
+    "skippedSecretFiles": {
+      "type": "integer",
+      "description": "Total files that contributed nothing to the card: skippedByFilename + skippedByContent"
+    },
+    "skippedByFilename": {
+      "type": "integer",
+      "description": "Files skipped by name alone (.env-shaped), never opened"
+    },
+    "skippedByContent": {
+      "type": "integer",
+      "description": "Files opened, then dropped whole because a line inside looked secret-shaped"
+    },
+    "scanTruncated": {
+      "type": "boolean",
+      "description": "True if a cost cap (file-count or file-size) cut the code scan short -- the card's deps/symbols/entrypoints are then a partial, not a complete, picture of the repo. False for shallow-remote cards (no scan ran at all, a different condition from a scan that ran and was cut short)."
+    },
+    "truncatedBy": {
+      "type": "array",
+      "items": { "enum": ["maxFilesRead", "maxFileBytes", "maxSymbols"] },
+      "description": "Which cap(s) tripped, when scanTruncated is true. maxFileBytes also covers an oversized README.md/CLAUDE.md, the same size guard applied to a different file. maxSymbols means more distinct symbols were found than the card can carry -- symbols/entrypoints/deps are a partial picture even when no file-level cap also tripped."
+    }
+  }
+}
