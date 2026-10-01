@@ -6,6 +6,14 @@ All notable changes to vibe-recall are documented here. Format follows
 
 The plugin ships from `plugins/vibe-recall/` and carries a copy of this file.
 
+## [0.1.2] — 2026-10-01
+
+Version-pair fix, no behavior change. The v0.1.1 tag shipped with `plugin.json` and `package.json` still reading 0.1.0, so the installed plugin reported the wrong version. Both now read 0.1.2 and the pair stays in lockstep from here. First marketplace registration (vibe-plugins stable channel).
+
+## [0.1.1] — 2026-08-12
+
+The initial release as tagged. Same content as the 0.1.0 entry below; the tag and the manifest disagreed, which 0.1.2 corrects.
+
 ## [0.1.0] — 2026-08-12
 
 Initial release. Indexes a developer's own git repos and surfaces prior art while
