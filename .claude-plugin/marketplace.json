@@ -1,0 +1,28 @@
+{
+  "name": "vibe-recall",
+  "owner": {
+    "name": "626Labs LLC"
+  },
+  "metadata": {
+    "description": "Vibe Recall \u2014 surface prior art from your own repos while you spec the next one. Canary channel: this repo's main."
+  },
+  "plugins": [
+    {
+      "name": "vibe-recall",
+      "source": "./plugins/vibe-recall",
+      "description": "Surface prior art from your own repos while you spec the next one. Indexes your estate, ranks what you already built, and verifies the hit at current HEAD before it claims anything.",
+      "author": {
+        "name": "626Labs LLC"
+      },
+      "keywords": [
+        "vibe-recall",
+        "prior-art",
+        "estate-index",
+        "vibe-coding",
+        "claude-code-plugin",
+        "626labs"
+      ],
+      "category": "productivity"
+    }
+  ]
+}

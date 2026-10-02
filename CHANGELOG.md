@@ -4,7 +4,27 @@ All notable changes to vibe-recall are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-The plugin ships from `plugins/vibe-recall/` and carries a copy of this file.
+The plugin ships from `plugins/vibe-recall/`.
+
+## [0.1.3] — 2026-10-02
+
+Install hygiene from the 2026-10-01 promotion review. No index, ranking or hook behavior change.
+
+### Added
+
+- `deps present` line in `vitals`, and a named-fix error when the engine's one runtime dependency (`ajv`) is missing. The install-time `npm ci` can silently not run (no npm on PATH, offline, timeout); before this, the hook kept working and every command died at module load with `ERR_MODULE_NOT_FOUND`. `ajv` is now resolved lazily at first use. Step 0 in first-run-setup names the recovery.
+- Root `.claude-plugin/marketplace.json`, so the README's canary line (`/plugin install vibe-recall@estevanhernandez-stack-ed/vibe-recall`) resolves. It never could before; the solo repo had no manifest at its root.
+- `LICENSE` (MIT, as `plugin.json` has declared since 0.1.0).
+- `.github/workflows/release.yml`, the family's tag-push release caller.
+
+### Changed
+
+- This file no longer claims the plugin directory carries a copy of it; it never did.
+- `plugin.json` and `package.json` read 0.1.3.
+
+### Known, not changed
+
+- The install-time `npm ci` also installs the jest dev tree into every user's plugin cache. Trimming it means an install-time `--omit=dev`, which Claude Code's installer does not take; left as is.
 
 ## [0.1.2] — 2026-10-01
 

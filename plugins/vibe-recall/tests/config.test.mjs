@@ -2,7 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { execSync } from 'node:child_process';
-import { validateConfig, DEFAULT_WALLS, loadConfig, configPath, detectAuthors } from '../engine/config.mjs';
+import {
+  validateConfig, DEFAULT_WALLS, loadConfig, configPath, detectAuthors,
+  depsPresent, loadValidator, MISSING_DEPS_MESSAGE
+} from '../engine/config.mjs';
 
 // No wall ships pre-seeded (DEFAULT_WALLS is deliberately empty -- see
 // engine/config.mjs) -- a test asserting the seed contains a specific string
@@ -12,6 +15,17 @@ import { validateConfig, DEFAULT_WALLS, loadConfig, configPath, detectAuthors } 
 // currently contains: a configured wall survives a load, the union is
 // applied, a user-supplied wall list is never silently emptied, and the
 // floor cannot be subtracted from even if a future release re-seeds it.
+
+// The install-time `npm ci` can silently not run. The failure has to be a
+// sentence naming the fix, raised at first real use, not ERR_MODULE_NOT_FOUND
+// at load time -- and vitals has to be able to report it without ajv present.
+test('a missing ajv surfaces as the named-fix message, not a module-load crash', () => {
+  const missing = () => { throw new Error('Cannot find module \'ajv\''); };
+  expect(() => loadValidator(missing)).toThrow(MISSING_DEPS_MESSAGE);
+  expect(depsPresent(missing)).toBe(false);
+  expect(depsPresent()).toBe(true);
+  expect(MISSING_DEPS_MESSAGE).toMatch(/npm ci --omit=dev/);
+});
 
 test('DEFAULT_WALLS starts empty -- nothing ships pre-seeded', () => {
   expect(DEFAULT_WALLS).toEqual([]);

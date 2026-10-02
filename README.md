@@ -110,6 +110,10 @@ Run against roughly 90 local repos before tagging, not a synthetic fixture:
 
 ## Known limits (v0.1)
 
+- **One runtime dependency, installed at plugin-install time.** Claude Code runs `npm ci`
+  in the plugin directory when it installs the plugin; if that step did not happen (no npm
+  on PATH, offline, timeout) the prompt hook still works and every command stops with a
+  message naming the fix. `/vibe-recall:vitals` reports it as `deps present NO`.
 - **No public or open-source code search.** The index only ever walks the
   configured estate root. It has no notion of anyone's code but the estate owner's.
 - **No comparative briefs across multiple hits.** `/vibe-recall:brief` verifies one
