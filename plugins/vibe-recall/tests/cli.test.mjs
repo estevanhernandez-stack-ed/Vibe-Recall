@@ -508,6 +508,7 @@ describe('cli.mjs', () => {
       expect(out).toMatch(/repos indexed\s+0/);
       expect(out).toMatch(/foreign repos\s+0/);
       expect(out).toMatch(/scan truncated\s+0/);
+      expect(out).toMatch(/deps present\s+yes/);
     } finally {
       fs.rmSync(dataHome, { recursive: true, force: true });
     }

@@ -5,6 +5,11 @@ description: Internal skill invoked on first vibe-recall use when no config exis
 
 # vibe-recall first-run-setup
 
+0. If any `node engine/cli.mjs` command stops with the "dependency ajv is not installed"
+   message, the install-time `npm ci` did not run. Run `npm ci --omit=dev` inside the
+   installed `plugins/vibe-recall/` directory once, confirm `node engine/cli.mjs vitals`
+   prints `deps present yes`, then continue. Do not work around it by skipping validation.
+
 1. Gather (AskUserQuestion where not derivable from context):
    - `estateRoot` -- the directory containing the user's repos. Offer a sensible guess (the
      parent of the current repo, or the current directory if it already looks like an

@@ -12,8 +12,8 @@ node engine/cli.mjs vitals
 ```
 
 Prints, in order: repos indexed, deep cards, queue depth, diverged pairs, foreign repos
-(count, then each one named), scan truncated, secret-file skips. Read every line, not just
-the first one:
+(count, then each one named), scan truncated, secret-file skips, deps present. Read every
+line, not just the first one:
 
 - **repos indexed / deep cards / queue depth** -- coverage. A queue depth close to the repo
   count with zero deep cards is expected right after a first `:index`, not a problem to fix.
@@ -37,6 +37,12 @@ the first one:
 - **secret-file skips** -- files that contributed nothing to the index because they looked
   `.env`-shaped by name, or a line inside them looked secret-shaped by content. A high
   number here is the index working as designed, not a defect.
+
+- **deps present** -- `yes` when the engine's one runtime dependency (`ajv`) resolves from
+  the installed plugin directory. `NO` means the install-time `npm ci` did not run (no npm on
+  PATH, offline, or it timed out): the hook keeps working but `:index` and `:sweep` will stop
+  with the same message. The fix is the one printed on the line: `npm ci --omit=dev` inside
+  `plugins/vibe-recall/` of the installed plugin, then retry.
 
 This reports on the plugin's own index, not on any one target repo -- there is nothing here
 to fix by editing a target's source.

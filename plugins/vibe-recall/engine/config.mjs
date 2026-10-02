@@ -1,8 +1,31 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import Ajv from 'ajv';
+import { createRequire } from 'node:module';
 import { resolveDataHome } from './datahome.mjs';
+
+const require = createRequire(import.meta.url);
+
+export const MISSING_DEPS_MESSAGE =
+  'vibe-recall: the engine dependency "ajv" is not installed. Claude Code runs ' +
+  '`npm ci` in the plugin directory at install time; that step did not happen here ' +
+  '(no npm on PATH, offline, or the install timed out). Run `npm ci --omit=dev` ' +
+  'inside the installed plugins/vibe-recall/ directory, then retry.';
+
+// ajv is resolved lazily and synchronously (createRequire) instead of as a
+// static import. A static import makes a missing node_modules kill every
+// engine command at module-load time with ERR_MODULE_NOT_FOUND, before
+// vitals can say what is wrong; the hook kept working, so the failure was
+// invisible until a command crashed. Resolving at first use keeps vitals
+// runnable without ajv and turns the crash into a sentence that names the fix.
+export function depsPresent(resolver = require.resolve) {
+  try {
+    resolver('ajv');
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 // No tenant wall ships pre-seeded: a fresh install has nothing to wall off
 // until first-run-setup asks the user to configure one. The floor mechanism
@@ -30,12 +53,29 @@ export function detectAuthors(estateRoot) {
   return identity.filter(Boolean);
 }
 
-const schema = JSON.parse(
-  fs.readFileSync(new URL('../schemas/config.schema.json', import.meta.url), 'utf8')
-);
-const validate = new Ajv({ allErrors: true, useDefaults: true }).compile(schema);
+let cachedValidate = null;
+
+// requireFn is injectable so the missing-dependency path is testable without
+// uninstalling ajv; only the real require's result is cached.
+export function loadValidator(requireFn = require) {
+  if (requireFn === require && cachedValidate) return cachedValidate;
+  let Ajv;
+  try {
+    const mod = requireFn('ajv');
+    Ajv = mod.default || mod;
+  } catch {
+    throw new Error(MISSING_DEPS_MESSAGE);
+  }
+  const schema = JSON.parse(
+    fs.readFileSync(new URL('../schemas/config.schema.json', import.meta.url), 'utf8')
+  );
+  const validate = new Ajv({ allErrors: true, useDefaults: true }).compile(schema);
+  if (requireFn === require) cachedValidate = validate;
+  return validate;
+}
 
 export function validateConfig(obj) {
+  const validate = loadValidator();
   const clone = JSON.parse(JSON.stringify(obj));
   const valid = validate(clone);
   const errors = (validate.errors || []).map(e => {

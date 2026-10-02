@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { loadConfig } from './config.mjs';
+import { loadConfig, depsPresent } from './config.mjs';
 import { enumerateLocal, collapseDuplicates, normalizeRemote } from './corpus.mjs';
 import { remoteOnly } from './remote.mjs';
 import { buildShallowCard } from './cards.mjs';
@@ -297,6 +297,12 @@ const commands = {
     }
     console.log(`scan truncated     ${truncated}`);
     console.log(`secret-file skips  ${skippedSecretFiles}`);
+    // The install-time `npm ci` is the one step of a plugin install that can
+    // silently not happen (no npm on PATH, offline, timeout). Without it the
+    // hook still works and every other command crashes, so this is the line
+    // that makes that state visible before a command has to fail.
+    const deps = depsPresent();
+    console.log(`deps present       ${deps ? 'yes' : 'NO -- run `npm ci --omit=dev` in plugins/vibe-recall/'}`);
   },
 
   banner() {
